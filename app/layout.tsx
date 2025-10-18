@@ -1,5 +1,5 @@
 import './globals.css'
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -9,7 +9,11 @@ export const metadata: Metadata = {
   description: 'A brutally honest AI chat interface for questionable therapy advice',
   keywords: ['therapy', 'AI', 'chat', 'mental health', 'advice'],
   authors: [{ name: 'BetterBetterHelp Team' }],
-  viewport: 'width=device-width, initial-scale=1',
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 }
 
 export default function RootLayout({
