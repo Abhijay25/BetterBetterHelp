@@ -45,7 +45,8 @@ const createNewSession = (): ChatSession => ({
   ],
   createdAt: new Date(),
   updatedAt: new Date(),
-  title: 'New Chat'
+  title: 'New Chat',
+  selectedVoice: defaultVoice
 })
 
 export const useChatStore = create<ChatState>()(
@@ -72,8 +73,31 @@ export const useChatStore = create<ChatState>()(
         return newSession
       },
 
+      updateSessionTitle: (sessionId: string, title: string) => {
+        set(state => {
+          const updatedSessions = state.sessions.map(session => 
+            session.id === sessionId 
+              ? { ...session, title, updatedAt: new Date() }
+              : session
+          )
+          
+          const updatedCurrentSession = state.currentSession?.id === sessionId
+            ? { ...state.currentSession, title, updatedAt: new Date() }
+            : state.currentSession
+
+          return {
+            sessions: updatedSessions,
+            currentSession: updatedCurrentSession
+          }
+        })
+      },
+
       setCurrentSession: (session: ChatSession) => {
-        set({ currentSession: session, error: null })
+        set({ 
+          currentSession: session, 
+          error: null,
+          selectedVoice: session.selectedVoice || defaultVoice
+        })
       },
 
       addMessage: (message: Message) => {
@@ -84,6 +108,11 @@ export const useChatStore = create<ChatState>()(
           ...state.currentSession,
           messages: [...state.currentSession.messages, message],
           updatedAt: new Date()
+        }
+
+        // Generate title from first user message if it's still "New Chat"
+        if (updatedSession.title === 'New Chat' && message.role === 'user') {
+          updatedSession.title = message.content.substring(0, 50) + (message.content.length > 50 ? '...' : '')
         }
 
         set({
@@ -151,6 +180,21 @@ export const useChatStore = create<ChatState>()(
 
       setSelectedVoice: (voice: VoiceOption) => {
         set({ selectedVoice: voice })
+        // Also update the current session's voice
+        const state = get()
+        if (state.currentSession) {
+          const updatedSession = {
+            ...state.currentSession,
+            selectedVoice: voice,
+            updatedAt: new Date()
+          }
+          set({
+            currentSession: updatedSession,
+            sessions: state.sessions.map(session => 
+              session.id === updatedSession.id ? updatedSession : session
+            )
+          })
+        }
       },
 
       setTTSVolume: (volume: number) => {
@@ -173,7 +217,34 @@ export const useChatStore = create<ChatState>()(
         selectedVoice: state.selectedVoice,
         ttsVolume: state.ttsVolume,
         isDarkMode: state.isDarkMode
-      })
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state) {
+          // Convert date strings back to Date objects for sessions
+          state.sessions = state.sessions.map(session => ({
+            ...session,
+            createdAt: new Date(session.createdAt),
+            updatedAt: new Date(session.updatedAt),
+            messages: session.messages.map(message => ({
+              ...message,
+              timestamp: new Date(message.timestamp)
+            }))
+          }))
+          
+          // Convert date strings back to Date objects for current session
+          if (state.currentSession) {
+            state.currentSession = {
+              ...state.currentSession,
+              createdAt: new Date(state.currentSession.createdAt),
+              updatedAt: new Date(state.currentSession.updatedAt),
+              messages: state.currentSession.messages.map(message => ({
+                ...message,
+                timestamp: new Date(message.timestamp)
+              }))
+            }
+          }
+        }
+      }
     }
   )
 )

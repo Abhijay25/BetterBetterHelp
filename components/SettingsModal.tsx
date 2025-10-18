@@ -13,10 +13,10 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const { agentConfig, updateAgentConfig, isDarkMode, toggleDarkMode } = useChatStore()
 
   const personalityOptions = [
-    { value: 'sassy', label: 'Sassy & Sarcastic', description: 'Brutally honest with a side of attitude' },
-    { value: 'supportive', label: 'Supportive', description: 'Warm and encouraging (boring)' },
-    { value: 'brutal', label: 'Brutally Honest', description: 'No sugarcoating, just truth bombs' },
-    { value: 'sarcastic', label: 'Pure Sarcasm', description: 'Maximum sass, minimum help' }
+    { value: 'sassy', label: 'Sassy & Sarcastic', description: 'Brutally honest with a side of attitude', color: 'bbh-red' },
+    { value: 'supportive', label: 'Supportive', description: 'Warm and encouraging (boring)', color: 'bbh-green' },
+    { value: 'brutal', label: 'Brutally Honest', description: 'No sugarcoating, just truth bombs', color: 'bbh-red' },
+    { value: 'sarcastic', label: 'Pure Sarcasm', description: 'Maximum sass, minimum help', color: 'bbh-pink' }
   ]
 
 
@@ -77,7 +77,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                         key={option.value}
                         className={`block p-3 rounded-lg border cursor-pointer transition-colors ${
                           agentConfig.personality === option.value
-                            ? 'border-bbh-pink bg-bbh-pink/10'
+                            ? `border-${option.color} bg-${option.color}/10`
                             : 'border-bbh-light-gray hover:border-gray-500'
                         }`}
                       >
@@ -95,7 +95,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                             <div className="text-sm text-gray-400">{option.description}</div>
                           </div>
                           {agentConfig.personality === option.value && (
-                            <div className="w-2 h-2 bg-bbh-pink rounded-full"></div>
+                            <div className={`w-2 h-2 bg-${option.color} rounded-full`}></div>
                           )}
                         </div>
                       </label>
@@ -121,7 +121,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     <button
                       onClick={toggleDarkMode}
                       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                        isDarkMode ? 'bg-bbh-pink' : 'bg-gray-600'
+                        isDarkMode ? 'bg-bbh-green' : 'bg-gray-600'
                       }`}
                     >
                       <span

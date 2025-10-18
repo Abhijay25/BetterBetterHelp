@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Send, Bot, Sparkles, Settings, Mic, MicOff, Square, Volume2, VolumeX, ChevronDown } from 'lucide-react'
+import { Send, Bot, Sparkles, Settings, Mic, MicOff, Square, Volume2, VolumeX, ChevronDown, Menu } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useChatStore } from '@/store/chatStore'
 import { Message } from '@/types'
@@ -37,7 +37,7 @@ export default function ChatInterface() {
 
   const [input, setInput] = useState('')
   const [showSettings, setShowSettings] = useState(false)
-  const [showSidebar, setShowSidebar] = useState(false)
+  const [showSidebar, setShowSidebar] = useState(true) // Default to showing sidebar
   const [isRecording, setIsRecording] = useState(false)
   const [isProcessingAudio, setIsProcessingAudio] = useState(false)
   const [showVoiceMenu, setShowVoiceMenu] = useState(false)
@@ -54,7 +54,9 @@ export default function ChatInterface() {
     if (isTTSEnabled && message.role === 'assistant' && message.content) {
       try {
         console.log('🎤 Attempting TTS for message:', message.content.substring(0, 50) + '...');
-        await playTextToSpeechClient(message.content, selectedVoice.id, ttsVolume)
+        // Use session-specific voice if available, otherwise use global selectedVoice
+        const voiceToUse = currentSession?.selectedVoice || selectedVoice;
+        await playTextToSpeechClient(message.content, voiceToUse.id, ttsVolume)
         console.log('✅ TTS completed successfully');
       } catch (error) {
         console.error('❌ Error playing TTS:', error)
@@ -290,13 +292,26 @@ export default function ChatInterface() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <button
-                onClick={() => setShowSidebar(true)}
-                className="lg:hidden p-2 hover:bg-bbh-light-gray rounded-lg transition-colors"
+                onClick={() => setShowSidebar(!showSidebar)}
+                className={`p-2 rounded-lg transition-colors ${
+                  isDarkMode ? 'hover:bg-bbh-light-gray' : 'hover:bg-gray-100'
+                }`}
+                title={showSidebar ? 'Hide sidebar' : 'Show sidebar'}
               >
-                <Bot className="w-6 h-6 text-white" />
+                <Menu className={`w-6 h-6 ${isDarkMode ? 'text-white' : 'text-gray-900'}`} />
               </button>
-              <div className="w-10 h-10 bg-gradient-to-r from-bbh-pink to-bbh-purple rounded-full flex items-center justify-center">
-                <Image src={BetterBetterHelpLogo} alt="BetterBetterHelp Logo" width={64} height={64} className="bg-white rounded-full p-1" />
+              <div className="w-10 h-10 flex items-center justify-center">
+                <Image 
+                  src={BetterBetterHelpLogo} 
+                  alt="BetterBetterHelp Logo" 
+                  width={40} 
+                  height={40}
+                  className="bg-transparent logo-image"
+                  style={{ 
+                    backgroundColor: 'transparent',
+                    fill: 'none'
+                  }}
+                />
               </div>
               <div>
                 <h1 className={`text-xl font-bold ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>BetterBetterHelp</h1>
@@ -392,9 +407,9 @@ export default function ChatInterface() {
                           value={ttsVolume}
                           onChange={(e) => setTTSVolume(parseFloat(e.target.value))}
                           className="flex-1 h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer slider"
-                          style={{
-                            background: `linear-gradient(to right, #ec4899 0%, #ec4899 ${ttsVolume * 100}%, #374151 ${ttsVolume * 100}%, #374151 100%)`
-                          }}
+                 style={{
+                   background: `linear-gradient(to right, #10B981 0%, #10B981 ${ttsVolume * 100}%, #374151 ${ttsVolume * 100}%, #374151 100%)`
+                 }}
                         />
                         <Volume2 className="w-4 h-4 text-gray-400" />
                       </div>

@@ -16,6 +16,29 @@
   * {
     box-sizing: border-box;
   }
+
+  /* Ensure SVG images have transparent backgrounds */
+  img[src$=".svg"] {
+    background-color: transparent !important;
+    fill: none !important;
+  }
+
+  /* Ensure SVG elements within images have no fill */
+  img[src$=".svg"] svg {
+    fill: none !important;
+    background-color: transparent !important;
+  }
+
+  /* Specific styling for logo images */
+  .logo-image {
+    background-color: transparent !important;
+    fill: none !important;
+  }
+
+  .logo-image svg {
+    fill: none !important;
+    background-color: transparent !important;
+  }
 }
 
 @layer components {
@@ -24,7 +47,7 @@
   }
   
   .user-bubble {
-    @apply bg-gradient-to-r from-bbh-pink to-bbh-purple ml-auto text-white;
+    @apply bg-gradient-to-r from-bbh-pink to-bbh-green ml-auto text-white;
   }
   
   .ai-bubble {
@@ -40,7 +63,7 @@
   }
 
   .btn-primary {
-    @apply bg-gradient-to-r from-bbh-pink to-bbh-purple text-white px-6 py-3 rounded-xl font-medium hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl;
+    @apply bg-gradient-to-r from-bbh-pink to-bbh-green text-white px-6 py-3 rounded-xl font-medium hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl;
   }
 
   .btn-secondary {
@@ -56,7 +79,7 @@
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-bbh-pink to-bbh-purple bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-bbh-pink to-bbh-green bg-clip-text text-transparent;
   }
 }
 
@@ -88,7 +111,7 @@
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  background: #ec4899;
+  background: #10B981;
   height: 20px;
   width: 20px;
   border-radius: 50%;
@@ -98,7 +121,7 @@
 }
 
 .slider::-webkit-slider-thumb:hover {
-  background: #be185d;
+  background: #059669;
   transform: scale(1.1);
 }
 
@@ -110,7 +133,7 @@
 }
 
 .slider::-moz-range-thumb {
-  background: #ec4899;
+  background: #10B981;
   height: 20px;
   width: 20px;
   border-radius: 50%;
@@ -120,6 +143,6 @@
 }
 
 .slider::-moz-range-thumb:hover {
-  background: #be185d;
+  background: #059669;
   transform: scale(1.1);
 }

@@ -16,6 +16,7 @@ export interface ChatSession {
   createdAt: Date
   updatedAt: Date
   title?: string
+  selectedVoice?: VoiceOption
 }
 
 export interface AgentConfig {
@@ -56,6 +57,7 @@ export interface ChatState {
   
   // Actions
   createNewSession: () => ChatSession
+  updateSessionTitle: (sessionId: string, title: string) => void
   setCurrentSession: (session: ChatSession) => void
   addMessage: (message: Message) => void
   updateMessage: (messageId: string, updates: Partial<Message>) => void
