@@ -18,7 +18,7 @@ export class BetterBetterHelpAgentSDK implements AgentSDK {
   /**
    * Send a message to the agent and get a response
    */
-  async sendMessage(message: string, config?: Partial<AgentConfig>): Promise<AgentResponse> {
+  async sendMessage(message: string, config?: Partial<AgentConfig>, conversationHistory?: Array<{role: string, content: string, timestamp?: string}>): Promise<AgentResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/chat`, {
         method: 'POST',
@@ -28,7 +28,8 @@ export class BetterBetterHelpAgentSDK implements AgentSDK {
         },
         body: JSON.stringify({
           message,
-          config
+          config,
+          conversationHistory
         })
       })
 

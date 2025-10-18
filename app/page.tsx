@@ -63,6 +63,15 @@ export default function ChatInterface() {
     setError(null)
 
     try {
+      // Prepare conversation history (exclude the welcome message)
+      const conversationHistory = currentSession.messages
+        .filter(msg => msg.id !== '1') // Exclude the initial welcome message
+        .map(msg => ({
+          role: msg.role,
+          content: msg.content,
+          timestamp: msg.timestamp.toISOString()
+        }));
+
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
@@ -70,7 +79,8 @@ export default function ChatInterface() {
         },
         body: JSON.stringify({ 
           message: input,
-          sessionId: currentSession.id
+          sessionId: currentSession.id,
+          conversationHistory: conversationHistory
         }),
       })
 

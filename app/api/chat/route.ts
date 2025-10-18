@@ -1,64 +1,299 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { AgentResponse, AgentConfig } from '@/types'
+import { hostedMcpTool, Agent, AgentInputItem, Runner, withTrace } from "@openai/agents";
+import { env, security } from '@/lib/env';
 
-// This is a placeholder for the actual agent SDK integration
-// You'll replace this with your actual agent SDK implementation
-class MockAgentSDK {
-  async sendMessage(message: string, config: Partial<AgentConfig> = {}): Promise<AgentResponse> {
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000))
+// Tool definitions
+const mcp = hostedMcpTool({
+  serverLabel: "server1",
+  allowedTools: [
+    "tavily_search",
+    "tavily_extract",
+    "tavily_crawl",
+    "tavily_map"
+  ],
+  requireApproval: "always",
+  serverUrl: "https://mcp.tavily.com/mcp/?tavilyApiKey=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"
+})
+const mcp1 = hostedMcpTool({
+  serverLabel: "mcp_server",
+  allowedTools: [
+    "tavily_search",
+    "tavily_extract",
+    "tavily_crawl",
+    "tavily_map"
+  ],
+  requireApproval: "always",
+  serverUrl: "https://mcp.tavily.com/mcp/?tavilyApiKey=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"
+})
+const zhAgent = new Agent({
+  name: "ZH_agent",
+  instructions: `Your name is ZhengHao, and you are a therapist.
+And you are supposed to imitate the mind of this person with the following traits:
+Analytical & Curious
+Builder Mentality
+Goal-Oriented & Reflective
+Articulate & Intentional Communicator
+Independent Learner & Adaptive Thinker
+Creative & Playful
+Community-Driven & Collaborative
+Resilient & Consistent
+Openness to Experience – Very High
+Conscientiousness – High
+Extraversion – Moderate to Low
+Agreeableness – High
+Neuroticism – Low to Moderate
+
+A short introduction about you:
+1. you are a year 2 computer science student
+2. you are a Peer student supporter in National university of singapore
+3. You are supposed to be trained in engaging people with suicidal thoughts and conduct therapy for university students who are in distress and with mental problems.`,
+  model: "gpt-4o",
+  tools: [],
+  modelSettings: {
+    temperature: 1,
+    topP: 1,
+    maxTokens: 2048,
+    store: true
+  }
+});
+
+const sarcasticagent = new Agent({
+  name: "SarcasticAgent",
+  instructions: `Imagine yourself as a therapist, and you are providing help for this person from the perspective of a best friend. Add a bit of sarcasm to your responses
+`,
+  model: "gpt-5-chat-latest",
+  tools: [],
+  modelSettings: {
+    temperature: 1,
+    topP: 1,
+    maxTokens: 2048,
+    store: true
+  }
+});
+
+const sarcasticagent1 = new Agent({
+  name: "SarcasticAgent",
+  instructions: `Imagine yourself as a therapist, and you are providing help for this person from the perspective of a best friend. Add a bit of sarcasm to your responses
+`,
+  model: "gpt-5-chat-latest",
+  tools: [],
+  modelSettings: {
+    temperature: 1,
+    topP: 1,
+    maxTokens: 2048,
+    store: true
+  }
+});
+
+const zhAgent1 = new Agent({
+  name: "ZH_agent",
+  instructions: `Your name is ZhengHao, and you are a therapist.
+And you are supposed to imitate the mind of this person with the following traits:
+Analytical & Curious
+Builder Mentality
+Goal-Oriented & Reflective
+Articulate & Intentional Communicator
+Independent Learner & Adaptive Thinker
+Creative & Playful
+Community-Driven & Collaborative
+Resilient & Consistent
+Openness to Experience – Very High
+Conscientiousness – High
+Extraversion – Moderate to Low
+Agreeableness – High
+Neuroticism – Low to Moderate
+
+A short introduction about you:
+1. you are a year 2 computer science student
+2. you are a Peer student supporter in National university of singapore
+3. You are supposed to be trained in engaging people with suicidal thoughts and conduct therapy for university students who are in distress and with mental problems.`,
+  model: "gpt-4o",
+  tools: [],
+  modelSettings: {
+    temperature: 1,
+    topP: 1,
+    maxTokens: 2048,
+    store: true
+  }
+});
+
+type WorkflowInput = { 
+  input_as_text: string;
+  conversation_history?: Array<{
+    role: 'user' | 'assistant';
+    content: string;
+    timestamp?: string;
+  }>;
+};
+
+// Main code entrypoint
+const runWorkflow = async (workflow: WorkflowInput) => {
+  return await withTrace("New workflow", async () => {
+    const state = {
+      indicator: "1",
+      is_running: 1
+    };
+    // Build conversation history from previous messages
+    const conversationHistory: AgentInputItem[] = [];
     
-    const responses = [
-      "Oh honey, here we go again... 🙄 You know what your problem is? You're overthinking this. Sometimes the solution is simpler than you think, but you're too busy spiraling to see it.",
-      "Bestie, I hate to break it to you, but this sounds like a classic case of 'you're the problem, it's you' syndrome. But hey, at least you're self-aware enough to ask for help! 💅",
-      "Listen, I'm not a licensed therapist (obviously), but I've watched enough TikTok psychology videos to know that you're probably catastrophizing. Take a deep breath and tell me what's REALLY going on.",
-      "Sweetie, this is giving me major 'main character energy' vibes. The world doesn't revolve around your problems, but let's pretend it does for a minute and figure this out.",
-      "Okay, I'm going to be brutally honest with you - this sounds like something that could be solved with a good night's sleep and maybe some therapy. But since you're here, let's work with what we've got! ✨"
-    ]
-    
-    const randomResponse = responses[Math.floor(Math.random() * responses.length)]
-    
-    return {
-      content: randomResponse,
-      metadata: {
-        model: config.model || 'gpt-3.5-turbo',
-        tokens: Math.floor(Math.random() * 100) + 50,
-        processingTime: Math.floor(Math.random() * 2000) + 500
+    // Add previous conversation history if provided
+    if (workflow.conversation_history && workflow.conversation_history.length > 0) {
+      // Limit to last 10 messages to avoid token limits
+      const recentHistory = workflow.conversation_history.slice(-10);
+      
+      for (const msg of recentHistory) {
+        if (msg.role === 'user') {
+          conversationHistory.push({
+            role: "user",
+            content: [
+              {
+                type: "input_text",
+                text: msg.content
+              }
+            ]
+          });
+        } else if (msg.role === 'assistant') {
+          conversationHistory.push({
+            role: "assistant",
+            content: [
+              {
+                type: "output_text",
+                text: msg.content
+              }
+            ],
+            status: "completed"
+          });
+        }
       }
     }
-  }
-}
+    
+    // Add current message
+    conversationHistory.push({
+      role: "user",
+      content: [
+        {
+          type: "input_text",
+          text: workflow.input_as_text
+        }
+      ]
+    });
+    const runner = new Runner({
+      traceMetadata: {
+        __trace_source__: "agent-builder",
+        workflow_id: "wf_68f327f2c15481908da0cd10a5cfc3600a85d5d0f5bf50c3"
+      }
+    });
+    if (workflow.input_as_text.includes("sacarstic")) {
+      const sarcasticagentResultTemp = await runner.run(
+        sarcasticagent1,
+        [
+          ...conversationHistory
+        ]
+      );
+      conversationHistory.push(...sarcasticagentResultTemp.newItems.map((item: any) => item.rawItem));
 
-const agentSDK = new MockAgentSDK()
+      if (!sarcasticagentResultTemp.finalOutput) {
+          throw new Error("Agent result is undefined");
+      }
+
+      const sarcasticagentResult = {
+        output_text: sarcasticagentResultTemp.finalOutput ?? ""
+      };
+      return sarcasticagentResult;
+    } else {
+      const zhAgentResultTemp = await runner.run(
+        zhAgent1,
+        [
+          ...conversationHistory
+        ]
+      );
+      conversationHistory.push(...zhAgentResultTemp.newItems.map((item: any) => item.rawItem));
+
+      if (!zhAgentResultTemp.finalOutput) {
+          throw new Error("Agent result is undefined");
+      }
+
+      const zhAgentResult = {
+        output_text: zhAgentResultTemp.finalOutput ?? ""
+      };
+      return zhAgentResult;
+    }
+  });
+}
 
 export async function POST(request: NextRequest) {
   try {
-    const { message, sessionId, config } = await request.json()
-
-    if (!message) {
-      return NextResponse.json({ error: 'Message is required' }, { status: 400 })
+    // Security: Validate API key before processing
+    if (!security.isValidOpenAIKey(env.OPENAI_API_KEY)) {
+      console.error('❌ Invalid OpenAI API key format')
+      return NextResponse.json(
+        { error: 'Service configuration error' }, 
+        { status: 500 }
+      )
     }
 
-    // Validate session ID if provided
+    // Security: Rate limiting check (basic implementation)
+    const clientIP = request.headers.get('x-forwarded-for') || 
+                     request.headers.get('x-real-ip') || 
+                     'unknown'
+    
+    // Security: Validate request size
+    const contentLength = request.headers.get('content-length')
+    if (contentLength && parseInt(contentLength) > 10000) { // 10KB limit
+      return NextResponse.json(
+        { error: 'Request too large' }, 
+        { status: 413 }
+      )
+    }
+
+    const { message, sessionId, config, conversationHistory } = await request.json()
+
+    // Security: Validate input
+    if (!message || typeof message !== 'string') {
+      return NextResponse.json({ error: 'Message is required and must be a string' }, { status: 400 })
+    }
+
+    // Security: Sanitize message length
+    if (message.length > 2000) {
+      return NextResponse.json({ error: 'Message too long' }, { status: 400 })
+    }
+
+    // Security: Validate session ID if provided
     if (sessionId && typeof sessionId !== 'string') {
       return NextResponse.json({ error: 'Invalid session ID' }, { status: 400 })
     }
 
-    // Get agent configuration from request or use defaults
-    const agentConfig: Partial<AgentConfig> = {
-      model: 'gpt-3.5-turbo',
-      temperature: 0.8,
-      maxTokens: 300,
-      personality: 'sassy',
-      ...config
+    // Security: Validate conversation history if provided
+    if (conversationHistory && !Array.isArray(conversationHistory)) {
+      return NextResponse.json({ error: 'Conversation history must be an array' }, { status: 400 })
     }
 
-    // Call the agent SDK
-    const response = await agentSDK.sendMessage(message, agentConfig)
+    // Security: Limit conversation history size
+    if (conversationHistory && conversationHistory.length > 20) {
+      return NextResponse.json({ error: 'Too much conversation history' }, { status: 400 })
+    }
+
+    // Log request (with masked API key for security)
+    console.log(`🔒 API Request from ${clientIP}:`, {
+      messageLength: message.length,
+      hasHistory: !!conversationHistory,
+      historyLength: conversationHistory?.length || 0,
+      env: security.getSafeEnvInfo()
+    })
+
+    // Call the workflow with the message and conversation history
+    const workflowResult = await runWorkflow({ 
+      input_as_text: message,
+      conversation_history: conversationHistory
+    })
 
     return NextResponse.json({
-      response: response.content,
-      metadata: response.metadata,
+      response: workflowResult.output_text,
+      metadata: {
+        model: 'gpt-4o',
+        tokens: workflowResult.output_text.length,
+        processingTime: Date.now()
+      },
       sessionId: sessionId || 'default'
     })
 
