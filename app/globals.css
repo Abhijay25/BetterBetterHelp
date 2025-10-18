@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  body {
+    @apply bg-bbh-dark text-white antialiased;
+    margin: 0;
+    padding: 0;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+}
+
+@layer components {
+  .chat-bubble {
+    @apply rounded-2xl px-4 py-3 max-w-[80%] break-words shadow-lg;
+  }
+  
+  .user-bubble {
+    @apply bg-gradient-to-r from-bbh-pink to-bbh-purple ml-auto text-white;
+  }
+  
+  .ai-bubble {
+    @apply bg-bbh-gray border border-bbh-light-gray text-gray-100;
+  }
+  
+  .typing-indicator {
+    @apply flex space-x-1 items-center;
+  }
+  
+  .typing-dot {
+    @apply w-2 h-2 bg-gray-400 rounded-full animate-bounce;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-bbh-pink to-bbh-purple text-white px-6 py-3 rounded-xl font-medium hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl;
+  }
+
+  .btn-secondary {
+    @apply bg-bbh-gray border border-bbh-light-gray text-gray-100 px-6 py-3 rounded-xl font-medium hover:bg-bbh-light-gray transition-all duration-200;
+  }
+
+  .input-field {
+    @apply bg-bbh-gray border border-bbh-light-gray rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-bbh-pink focus:border-transparent transition-all duration-200;
+  }
+
+  .card {
+    @apply bg-bbh-gray border border-bbh-light-gray rounded-xl p-6 shadow-lg;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-bbh-pink to-bbh-purple bg-clip-text text-transparent;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

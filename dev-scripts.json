@@ -1,0 +1,16 @@
+{
+  "name": "better-better-help-dev",
+  "version": "1.0.0",
+  "description": "Development scripts for BetterBetterHelp",
+  "scripts": {
+    "setup": "./setup.sh",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf .next node_modules package-lock.json",
+    "fresh-install": "npm run clean && npm install",
+    "check": "npm run type-check && npm run lint"
+  }
+}
