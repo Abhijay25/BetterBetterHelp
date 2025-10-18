@@ -54,10 +54,19 @@ export function useAgent() {
     setError(null)
 
     try {
+      // Prepare conversation history (exclude the welcome message)
+      const conversationHistory = currentSession.messages
+        .filter(msg => msg.id !== '1') // Exclude the initial welcome message
+        .map(msg => ({
+          role: msg.role,
+          content: msg.content,
+          timestamp: msg.timestamp.toISOString()
+        }));
+
       const response = await agentSDK.sendMessage(content, {
         ...agentConfig,
         ...customConfig
-      })
+      }, conversationHistory)
 
       const aiMessage: Message = {
         id: generateId(),
