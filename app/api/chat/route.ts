@@ -224,8 +224,8 @@ const runWorkflow = async (workflow: WorkflowInput) => {
 export async function POST(request: NextRequest) {
   try {
     // Security: Validate API key before processing
-    if (!security.isValidOpenAIKey(env.OPENAI_API_KEY)) {
-      console.error('❌ Invalid OpenAI API key format')
+    if (!env.OPENAI_API_KEY || !security.isValidOpenAIKey(env.OPENAI_API_KEY)) {
+      console.error('❌ OpenAI API key is missing or invalid')
       return NextResponse.json(
         { error: 'Service configuration error' }, 
         { status: 500 }
