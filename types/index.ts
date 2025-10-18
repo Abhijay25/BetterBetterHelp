@@ -35,12 +35,24 @@ export interface AgentResponse {
   }
 }
 
+export interface VoiceOption {
+  id: string
+  name: string
+  gender: 'male' | 'female'
+  accent: string
+  description: string
+}
+
 export interface ChatState {
   currentSession: ChatSession | null
   sessions: ChatSession[]
   isLoading: boolean
   error: string | null
   agentConfig: AgentConfig
+  isTTSEnabled: boolean
+  selectedVoice: VoiceOption
+  ttsVolume: number
+  isDarkMode: boolean
   
   // Actions
   createNewSession: () => ChatSession
@@ -52,6 +64,10 @@ export interface ChatState {
   updateAgentConfig: (config: Partial<AgentConfig>) => void
   deleteSession: (sessionId: string) => void
   clearAllSessions: () => void
+  toggleTTS: () => void
+  setSelectedVoice: (voice: VoiceOption) => void
+  setTTSVolume: (volume: number) => void
+  toggleDarkMode: () => void
 }
 
 export interface AgentSDK {
