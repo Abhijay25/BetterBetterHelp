@@ -38,6 +38,7 @@ VERCEL_TOKEN=your_vercel_token_here
 #### Vercel Environment Variables (Project Settings → Environment Variables)
 ```
 OPENAI_API_KEY=sk-your-production-api-key-here
+ELEVENLABS_API_KEY=your-elevenlabs-api-key-here
 NODE_ENV=production
 ```
 
@@ -62,6 +63,7 @@ NODE_ENV=production
 ```bash
 # Production Environment Variables
 OPENAI_API_KEY=sk-your-production-api-key-here
+ELEVENLABS_API_KEY=your-elevenlabs-api-key-here
 NODE_ENV=production
 ```
 
