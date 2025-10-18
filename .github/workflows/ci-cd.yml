@@ -88,11 +88,27 @@ jobs:
 
       - name: Check for exposed secrets
         run: |
-          # Check for potential API key leaks
-          if grep -r "sk-" --exclude-dir=node_modules --exclude-dir=.git --exclude="*.md" .; then
-            echo "❌ Potential API key found in code"
+          # Check for potential API key leaks (excluding known safe patterns)
+          echo "Checking for exposed API keys..."
+          
+          # Look for actual OpenAI API key patterns (sk- followed by 20+ alphanumeric chars)
+          # but exclude known safe patterns and documentation
+          SUSPICIOUS_LINES=$(grep -rE "sk-[a-zA-Z0-9_-]{20,}" --exclude-dir=node_modules --exclude-dir=.git --exclude="*.md" --exclude="package-lock.json" --exclude="env.example" --exclude=".env.local" . | \
+            grep -v "sk-placeholder-key-for-build-only-not-for-runtime" | \
+            grep -v "sk-your-actual-openai-api-key-here" | \
+            grep -v "sk-your-production-api-key-here" | \
+            grep -v "sk-your-development-api-key-here" | \
+            grep -v "sk-your-actual-api-key-here" | \
+            grep -v "sk-your-production-key" | \
+            grep -v "/\\^sk-\\[a-zA-Z0-9_\\-\\]\\{20,\\}\\$/" || true)
+          
+          if [ -n "$SUSPICIOUS_LINES" ]; then
+            echo "❌ Potential API key found in code:"
+            echo "$SUSPICIOUS_LINES"
             exit 1
           fi
+          
+          echo "✅ No suspicious API keys found"
           
           # Check for .env files in git
           if git ls-files | grep -E "\.env"; then
