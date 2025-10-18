@@ -25,9 +25,9 @@ const mcp1 = hostedMcpTool({
   requireApproval: "always",
   serverUrl: "https://mcp.tavily.com/mcp/?tavilyApiKey=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"
 })
-const zhAgent = new Agent({
-  name: "ZH_agent",
-  instructions: `Your name is ZhengHao, and you are a therapist.
+const calmAgent = new Agent({
+  name: "calm_agent",
+  instructions: `Your name is CalmAgent, and you are a therapist.
 And you are supposed to imitate the mind of this person with the following traits:
 Analytical & Curious
 Builder Mentality
@@ -86,8 +86,8 @@ const sarcasticagent1 = new Agent({
 });
 
 const zhAgent1 = new Agent({
-  name: "ZH_agent",
-  instructions: `Your name is ZhengHao, and you are a therapist.
+  name: "calm_agent",
+  instructions: `Your name is CalmAgent, and you are a therapist.
 And you are supposed to imitate the mind of this person with the following traits:
 Analytical & Curious
 Builder Mentality
@@ -124,6 +124,13 @@ type WorkflowInput = {
     content: string;
     timestamp?: string;
   }>;
+  config?: {
+    model: string;
+    temperature: number;
+    maxTokens: number;
+    personality: string;
+    systemPrompt: string;
+  };
 };
 
 // Main code entrypoint
@@ -177,47 +184,50 @@ const runWorkflow = async (workflow: WorkflowInput) => {
         }
       ]
     });
+    // Get personality from config or default to 'sassy'
+    const personality = workflow.config?.personality || 'sassy';
+    
+    // Select agent based on personality
+    let selectedAgent;
+    switch (personality) {
+      case 'sarcastic':
+        selectedAgent = sarcasticagent1;
+        break;
+      case 'supportive':
+        selectedAgent = calmAgent;
+        break;
+      case 'brutal':
+        selectedAgent = zhAgent1;
+        break;
+      case 'sassy':
+      default:
+        selectedAgent = sarcasticagent;
+        break;
+    }
+
     const runner = new Runner({
       traceMetadata: {
         __trace_source__: "agent-builder",
         workflow_id: "wf_68f327f2c15481908da0cd10a5cfc3600a85d5d0f5bf50c3"
       }
     });
-    if (workflow.input_as_text.includes("sacarstic")) {
-      const sarcasticagentResultTemp = await runner.run(
-        sarcasticagent1,
-        [
-          ...conversationHistory
-        ]
-      );
-      conversationHistory.push(...sarcasticagentResultTemp.newItems.map((item: any) => item.rawItem));
 
-      if (!sarcasticagentResultTemp.finalOutput) {
-          throw new Error("Agent result is undefined");
-      }
+    const agentResultTemp = await runner.run(
+      selectedAgent,
+      [
+        ...conversationHistory
+      ]
+    );
+    conversationHistory.push(...agentResultTemp.newItems.map((item: any) => item.rawItem));
 
-      const sarcasticagentResult = {
-        output_text: sarcasticagentResultTemp.finalOutput ?? ""
-      };
-      return sarcasticagentResult;
-    } else {
-      const zhAgentResultTemp = await runner.run(
-        zhAgent1,
-        [
-          ...conversationHistory
-        ]
-      );
-      conversationHistory.push(...zhAgentResultTemp.newItems.map((item: any) => item.rawItem));
-
-      if (!zhAgentResultTemp.finalOutput) {
-          throw new Error("Agent result is undefined");
-      }
-
-      const zhAgentResult = {
-        output_text: zhAgentResultTemp.finalOutput ?? ""
-      };
-      return zhAgentResult;
+    if (!agentResultTemp.finalOutput) {
+        throw new Error("Agent result is undefined");
     }
+
+    const agentResult = {
+      output_text: agentResultTemp.finalOutput ?? ""
+    };
+    return agentResult;
   });
 }
 
@@ -281,16 +291,18 @@ export async function POST(request: NextRequest) {
       env: security.getSafeEnvInfo()
     })
 
-    // Call the workflow with the message and conversation history
+    // Call the workflow with the message, conversation history, and config
     const workflowResult = await runWorkflow({ 
       input_as_text: message,
-      conversation_history: conversationHistory
+      conversation_history: conversationHistory,
+      config: config
     })
 
     return NextResponse.json({
       response: workflowResult.output_text,
       metadata: {
-        model: 'gpt-4o',
+        model: config?.model || 'gpt-4o',
+        personality: config?.personality || 'sassy',
         tokens: workflowResult.output_text.length,
         processingTime: Date.now()
       },

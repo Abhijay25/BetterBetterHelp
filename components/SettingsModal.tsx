@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Settings, Bot, Zap, MessageSquare } from 'lucide-react'
+import { X, Settings, MessageSquare } from 'lucide-react'
 import { useChatStore } from '@/store/chatStore'
 
 interface SettingsModalProps {
@@ -19,11 +19,6 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     { value: 'sarcastic', label: 'Pure Sarcasm', description: 'Maximum sass, minimum help' }
   ]
 
-  const modelOptions = [
-    { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo', description: 'Fast and efficient' },
-    { value: 'gpt-4', label: 'GPT-4', description: 'More intelligent responses' },
-    { value: 'gpt-4-turbo', label: 'GPT-4 Turbo', description: 'Latest and greatest' }
-  ]
 
   return (
     <AnimatePresence>
@@ -69,43 +64,6 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
               {/* Content */}
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
-                {/* Model Selection */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-3">
-                    <Bot className="w-4 h-4 inline mr-2" />
-                    AI Model
-                  </label>
-                  <div className="space-y-2">
-                    {modelOptions.map((option) => (
-                      <label
-                        key={option.value}
-                        className={`block p-3 rounded-lg border cursor-pointer transition-colors ${
-                          agentConfig.model === option.value
-                            ? 'border-bbh-pink bg-bbh-pink/10'
-                            : 'border-bbh-light-gray hover:border-gray-500'
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="model"
-                          value={option.value}
-                          checked={agentConfig.model === option.value}
-                          onChange={(e) => updateAgentConfig({ model: e.target.value })}
-                          className="sr-only"
-                        />
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="text-white font-medium">{option.label}</div>
-                            <div className="text-sm text-gray-400">{option.description}</div>
-                          </div>
-                          {agentConfig.model === option.value && (
-                            <div className="w-2 h-2 bg-bbh-pink rounded-full"></div>
-                          )}
-                        </div>
-                      </label>
-                    ))}
-                  </div>
-                </div>
 
                 {/* Personality */}
                 <div>
@@ -145,52 +103,6 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   </div>
                 </div>
 
-                {/* Advanced Settings */}
-                <div>
-                  <label className="block text-sm font-medium text-white mb-3">
-                    <Zap className="w-4 h-4 inline mr-2" />
-                    Advanced Settings
-                  </label>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm text-gray-400 mb-2">
-                        Temperature: {agentConfig.temperature}
-                      </label>
-                      <input
-                        type="range"
-                        min="0"
-                        max="2"
-                        step="0.1"
-                        value={agentConfig.temperature}
-                        onChange={(e) => updateAgentConfig({ temperature: parseFloat(e.target.value) })}
-                        className="w-full h-2 bg-bbh-light-gray rounded-lg appearance-none cursor-pointer"
-                      />
-                      <div className="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>Conservative</span>
-                        <span>Creative</span>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm text-gray-400 mb-2">
-                        Max Tokens: {agentConfig.maxTokens}
-                      </label>
-                      <input
-                        type="range"
-                        min="50"
-                        max="1000"
-                        step="50"
-                        value={agentConfig.maxTokens}
-                        onChange={(e) => updateAgentConfig({ maxTokens: parseInt(e.target.value) })}
-                        className="w-full h-2 bg-bbh-light-gray rounded-lg appearance-none cursor-pointer"
-                      />
-                      <div className="flex justify-between text-xs text-gray-500 mt-1">
-                        <span>Short</span>
-                        <span>Long</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
               </div>
 
               {/* Footer */}

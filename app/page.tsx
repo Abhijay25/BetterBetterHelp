@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Send, Bot, User, Sparkles, Settings, Plus, Trash2 } from 'lucide-react'
+import { Send, Bot, User, Sparkles, Settings, Trash2 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -167,13 +167,6 @@ export default function ChatInterface() {
               </div>
             </div>
             <div className="flex items-center space-x-2">
-              <button
-                onClick={handleNewChat}
-                className="p-2 hover:bg-bbh-light-gray rounded-lg transition-colors"
-                title="New Chat"
-              >
-                <Plus className="w-5 h-5 text-gray-400" />
-              </button>
               <button
                 onClick={() => setShowSettings(true)}
                 className="p-2 hover:bg-bbh-light-gray rounded-lg transition-colors"
