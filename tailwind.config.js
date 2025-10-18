@@ -9,7 +9,8 @@ module.exports = {
     extend: {
       colors: {
         'bbh-pink': '#FF69B4',
-        'bbh-purple': '#8A2BE2',
+        'bbh-green': '#10B981',
+        'bbh-red': '#EF4444',
         'bbh-dark': '#1A1A1A',
         'bbh-gray': '#2D2D2D',
         'bbh-light-gray': '#404040',
