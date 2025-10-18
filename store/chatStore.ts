@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
-import { ChatState, Message, ChatSession, AgentConfig } from '@/types'
+import { ChatState, Message, ChatSession, AgentConfig, VoiceOption } from '@/types'
 
 const defaultAgentConfig: AgentConfig = {
   model: 'gpt-3.5-turbo',
@@ -23,6 +23,14 @@ Tone: Confident, slightly unhinged, entertaining, and questionably helpful. You'
 
 Keep responses under 200 words and make them engaging and entertaining.`,
   personality: 'sassy'
+}
+
+const defaultVoice: VoiceOption = {
+  id: "21m00Tcm4TlvDq8ikWAM",
+  name: "Rachel",
+  gender: "female",
+  accent: "American",
+  description: "Clear, professional American female voice"
 }
 
 const createNewSession = (): ChatSession => ({
@@ -48,6 +56,10 @@ export const useChatStore = create<ChatState>()(
       isLoading: false,
       error: null,
       agentConfig: defaultAgentConfig,
+      isTTSEnabled: false,
+      selectedVoice: defaultVoice,
+      ttsVolume: 0.7, // Default volume at 70%
+      isDarkMode: true, // Default to dark mode
 
       // Actions
       createNewSession: () => {
@@ -129,6 +141,26 @@ export const useChatStore = create<ChatState>()(
           currentSession: null,
           error: null
         })
+      },
+
+      toggleTTS: () => {
+        set(state => ({
+          isTTSEnabled: !state.isTTSEnabled
+        }))
+      },
+
+      setSelectedVoice: (voice: VoiceOption) => {
+        set({ selectedVoice: voice })
+      },
+
+      setTTSVolume: (volume: number) => {
+        set({ ttsVolume: Math.max(0, Math.min(1, volume)) }) // Clamp between 0 and 1
+      },
+
+      toggleDarkMode: () => {
+        set(state => ({
+          isDarkMode: !state.isDarkMode
+        }))
       }
     }),
     {
@@ -136,7 +168,11 @@ export const useChatStore = create<ChatState>()(
       partialize: (state) => ({
         sessions: state.sessions,
         currentSession: state.currentSession,
-        agentConfig: state.agentConfig
+        agentConfig: state.agentConfig,
+        isTTSEnabled: state.isTTSEnabled,
+        selectedVoice: state.selectedVoice,
+        ttsVolume: state.ttsVolume,
+        isDarkMode: state.isDarkMode
       })
     }
   )

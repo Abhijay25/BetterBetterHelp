@@ -1,7 +1,7 @@
 'use client'
 
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Settings, MessageSquare } from 'lucide-react'
+import { X, Settings, MessageSquare, Sun, Moon } from 'lucide-react'
 import { useChatStore } from '@/store/chatStore'
 
 interface SettingsModalProps {
@@ -10,7 +10,7 @@ interface SettingsModalProps {
 }
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
-  const { agentConfig, updateAgentConfig } = useChatStore()
+  const { agentConfig, updateAgentConfig, isDarkMode, toggleDarkMode } = useChatStore()
 
   const personalityOptions = [
     { value: 'sassy', label: 'Sassy & Sarcastic', description: 'Brutally honest with a side of attitude' },
@@ -100,6 +100,36 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                         </div>
                       </label>
                     ))}
+                  </div>
+                </div>
+
+                {/* Theme Toggle */}
+                <div>
+                  <label className="block text-sm font-medium text-white mb-3">
+                    {isDarkMode ? <Moon className="w-4 h-4 inline mr-2" /> : <Sun className="w-4 h-4 inline mr-2" />}
+                    Theme
+                  </label>
+                  <div className="flex items-center justify-between p-3 rounded-lg border border-bbh-light-gray">
+                    <div>
+                      <div className="text-white font-medium">
+                        {isDarkMode ? 'Dark Mode' : 'Light Mode'}
+                      </div>
+                      <div className="text-sm text-gray-400">
+                        {isDarkMode ? 'Easy on the eyes (default)' : 'Bright and cheerful'}
+                      </div>
+                    </div>
+                    <button
+                      onClick={toggleDarkMode}
+                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                        isDarkMode ? 'bg-bbh-pink' : 'bg-gray-600'
+                      }`}
+                    >
+                      <span
+                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                          isDarkMode ? 'translate-x-6' : 'translate-x-1'
+                        }`}
+                      />
+                    </button>
                   </div>
                 </div>
 
