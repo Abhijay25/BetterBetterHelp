@@ -3,8 +3,8 @@ import { z } from 'zod'
 
 // Define environment schema with validation
 const envSchema = z.object({
-  OPENAI_API_KEY: z.string().min(1, 'OpenAI API key is required').optional(),
-  ELEVENLABS_API_KEY: z.string().min(1, 'ElevenLabs API key is required').optional(),
+  OPENAI_API_KEY: z.string().optional(),
+  ELEVENLABS_API_KEY: z.string().optional(),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.string().default('3000'),
   // Add other environment variables as needed

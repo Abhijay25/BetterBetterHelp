@@ -2,14 +2,20 @@ import { ElevenLabsClient } from "@elevenlabs/elevenlabs-js";
 import { NextRequest, NextResponse } from "next/server";
 import { env, security } from '@/lib/env';
 
-// Validate ElevenLabs API key before creating client
-if (!env.ELEVENLABS_API_KEY) {
-  console.error('❌ ELEVENLABS_API_KEY is not set - Speech-to-text API will not work');
-}
+// Lazy initialization of ElevenLabs client to avoid build-time errors
+let elevenlabs: ElevenLabsClient | null = null;
 
-const elevenlabs = new ElevenLabsClient({
-  apiKey: env.ELEVENLABS_API_KEY,
-});
+function getElevenLabsClient(): ElevenLabsClient {
+  if (!elevenlabs) {
+    if (!env.ELEVENLABS_API_KEY) {
+      throw new Error('ELEVENLABS_API_KEY is not configured');
+    }
+    elevenlabs = new ElevenLabsClient({
+      apiKey: env.ELEVENLABS_API_KEY,
+    });
+  }
+  return elevenlabs;
+}
 
 export async function POST(request: NextRequest) {
   try {
@@ -63,7 +69,7 @@ export async function POST(request: NextRequest) {
       type: audioFile.type || 'audio/mp3' 
     });
 
-    const transcription = await elevenlabs.speechToText.convert({
+    const transcription = await getElevenLabsClient().speechToText.convert({
       file: audioBlob,
       modelId: "scribe_v1", // Model to use, for now only "scribe_v1" is supported.
       tagAudioEvents: true, // Tag audio events like laughter, applause, etc.
