@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
-    const configData = await NextRequest.json()
+    const configData = await request.json()
 
     // Validate configuration
     const requiredFields = ['model', 'temperature', 'maxTokens', 'personality', 'systemPrompt']
