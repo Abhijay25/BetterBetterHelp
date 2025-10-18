@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "A brutally honest AI chat interface for questionable therapy advice",
   "private": true,
+  "main": "page.tsx",
   "scripts": {
+    "start": "node page.tsx",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -15,6 +17,7 @@
     "deploy:preview": "vercel"
   },
   "dependencies": {
+    "express": "^4.19.0",
     "@openai/agents": "^0.1.10",
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",

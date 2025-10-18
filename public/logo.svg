@@ -1,0 +1,62 @@
+<svg width="200" height="120" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Flames behind the figure -->
+  <g id="flames">
+    <!-- Main flame -->
+    <path d="M95 25 Q90 15 85 20 Q80 10 75 20 Q70 5 65 20 Q60 8 55 20 Q50 12 45 20 Q40 15 35 20 Q30 18 25 20 Q20 20 15 20 Q10 25 15 30 Q20 35 25 30 Q30 40 35 30 Q40 45 45 30 Q50 50 55 30 Q60 55 65 30 Q70 60 75 30 Q80 65 85 30 Q90 70 95 30 Q100 75 105 30 Q110 80 115 30 Q120 85 125 30 Q130 90 135 30 Q140 95 145 30 Q150 100 155 30 Q160 105 165 30 Q170 110 175 30 Q180 115 185 30 Q190 120 195 30 Q200 125 195 35 Q190 40 185 35 Q180 45 175 35 Q170 50 165 35 Q160 55 155 35 Q150 60 145 35 Q140 65 135 35 Q130 70 125 35 Q120 75 115 35 Q110 80 105 35 Q100 85 95 35" fill="url(#flameGradient)" opacity="0.9"/>
+    
+    <!-- Secondary flames -->
+    <path d="M85 20 Q80 10 75 15 Q70 5 65 15 Q60 8 55 15 Q50 12 45 15 Q40 15 35 15 Q30 18 25 15 Q20 20 15 15 Q10 25 15 20 Q20 25 25 20 Q30 30 35 20 Q40 35 45 20 Q50 40 55 20 Q60 45 65 20 Q70 50 75 20 Q80 55 85 20" fill="url(#flameGradient2)" opacity="0.7"/>
+    
+    <path d="M115 20 Q110 10 105 15 Q100 5 95 15 Q90 8 85 15 Q80 12 75 15 Q70 15 65 15 Q60 18 55 15 Q50 20 45 15 Q40 25 45 20 Q50 25 55 20 Q60 30 65 20 Q70 35 75 20 Q80 40 85 20 Q90 45 95 20 Q100 50 105 20 Q110 55 115 20" fill="url(#flameGradient3)" opacity="0.6"/>
+  </g>
+  
+  <!-- Stick figure -->
+  <g id="stick-figure" stroke="#000000" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Head -->
+    <circle cx="100" cy="45" r="8"/>
+    
+    <!-- Body -->
+    <line x1="100" y1="53" x2="100" y2="80"/>
+    
+    <!-- Arms (bent, hands near head) -->
+    <line x1="100" y1="60" x2="85" y2="50"/>
+    <line x1="100" y1="60" x2="115" y2="50"/>
+    
+    <!-- Legs (kneeling position) -->
+    <line x1="100" y1="80" x2="90" y2="95"/>
+    <line x1="100" y1="80" x2="110" y2="95"/>
+    
+    <!-- Hands (near head) -->
+    <circle cx="85" cy="50" r="2"/>
+    <circle cx="115" cy="50" r="2"/>
+  </g>
+  
+  <!-- Text -->
+  <g id="text">
+    <text x="100" y="110" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="bold">
+      <tspan fill="#4ade80">BetterBetter</tspan>
+      <tspan fill="#374151">Help</tspan>
+    </text>
+  </g>
+  
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="flameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f7931e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#ff4500;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="flameGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff8c00;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ff6347;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#dc143c;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="flameGradient3" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffa500;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#ff7f50;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#b22222;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+</svg>
