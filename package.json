@@ -11,10 +11,12 @@
     "type-check": "tsc --noEmit",
     "test": "echo \"No tests specified\" && exit 0",
     "test:ci": "npm run lint && npm run type-check && npm run build",
+    "test:elevenlabs": "npx tsx scripts/test-elevenlabs.mts",
     "deploy": "vercel --prod",
     "deploy:preview": "vercel"
   },
   "dependencies": {
+    "@elevenlabs/elevenlabs-js": "^2.19.0",
     "@openai/agents": "^0.1.10",
     "@types/node": "^20.0.0",
     "@types/react": "^18.2.0",
@@ -22,6 +24,7 @@
     "autoprefixer": "^10.4.0",
     "axios": "^1.6.0",
     "clsx": "^2.0.0",
+    "dotenv": "^17.2.3",
     "framer-motion": "^10.16.0",
     "lucide-react": "^0.292.0",
     "next": "^14.0.0",

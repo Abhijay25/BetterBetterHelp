@@ -4,6 +4,7 @@ import { z } from 'zod'
 // Define environment schema with validation
 const envSchema = z.object({
   OPENAI_API_KEY: z.string().min(1, 'OpenAI API key is required').optional(),
+  ELEVENLABS_API_KEY: z.string().min(1, 'ElevenLabs API key is required').optional(),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
   PORT: z.string().default('3000'),
   // Add other environment variables as needed
@@ -17,7 +18,10 @@ function validateEnv() {
     // Only validate API key if we're not in build mode
     if (process.env.NODE_ENV !== 'production' || process.env.NEXT_PHASE !== 'phase-production-build') {
       if (!parsed.OPENAI_API_KEY) {
-        console.warn('⚠️  OPENAI_API_KEY is not set - API calls will fail')
+        console.warn('⚠️  OPENAI_API_KEY is not set - Chat API calls will fail')
+      }
+      if (!parsed.ELEVENLABS_API_KEY) {
+        console.warn('⚠️  ELEVENLABS_API_KEY is not set - Speech-to-text API calls will fail')
       }
     }
     
@@ -28,6 +32,7 @@ function validateEnv() {
       console.warn('⚠️  Environment validation warning during build:', error)
       return {
         OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+        ELEVENLABS_API_KEY: process.env.ELEVENLABS_API_KEY,
         NODE_ENV: process.env.NODE_ENV || 'development',
         PORT: process.env.PORT || '3000'
       }
@@ -65,5 +70,7 @@ export const security = {
     PORT: env.PORT,
     OPENAI_API_KEY_PRESENT: !!env.OPENAI_API_KEY,
     OPENAI_API_KEY_MASKED: security.maskApiKey(env.OPENAI_API_KEY),
+    ELEVENLABS_API_KEY_PRESENT: !!env.ELEVENLABS_API_KEY,
+    ELEVENLABS_API_KEY_MASKED: security.maskApiKey(env.ELEVENLABS_API_KEY),
   })
 }
