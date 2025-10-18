@@ -61,7 +61,7 @@ const sarcasticagent = new Agent({
   name: "SarcasticAgent",
   instructions: `Imagine yourself as a therapist, and you are providing help for this person from the perspective of a best friend. Add a bit of sarcasm to your responses
 `,
-  model: "gpt-5-chat-latest",
+  model: "gpt-4o",
   tools: [],
   modelSettings: {
     temperature: 1,
@@ -75,7 +75,7 @@ const sarcasticagent1 = new Agent({
   name: "SarcasticAgent",
   instructions: `Imagine yourself as a therapist, and you are providing help for this person from the perspective of a best friend. Add a bit of sarcasm to your responses
 `,
-  model: "gpt-5-chat-latest",
+  model: "gpt-4o",
   tools: [],
   modelSettings: {
     temperature: 1,

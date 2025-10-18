@@ -16,5 +16,8 @@
     }
   },
   "regions": ["iad1"],
-  "framework": "nextjs"
+  "framework": "nextjs",
+  "buildCommand": "npm run build",
+  "installCommand": "npm ci",
+  "outputDirectory": ".next"
 }

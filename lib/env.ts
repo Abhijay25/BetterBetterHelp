@@ -23,6 +23,15 @@ function validateEnv() {
     
     return parsed
   } catch (error) {
+    // During build time, be more lenient with environment validation
+    if (process.env.NEXT_PHASE === 'phase-production-build') {
+      console.warn('⚠️  Environment validation warning during build:', error)
+      return {
+        OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+        NODE_ENV: process.env.NODE_ENV || 'development',
+        PORT: process.env.PORT || '3000'
+      }
+    }
     console.error('❌ Invalid environment variables:', error)
     throw new Error('Environment validation failed')
   }
