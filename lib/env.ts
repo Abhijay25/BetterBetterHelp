@@ -32,7 +32,7 @@ export const security = {
 
   // Validate OpenAI API key format
   isValidOpenAIKey: (apiKey: string): boolean => {
-    return /^sk-[a-zA-Z0-9]{20,}$/.test(apiKey)
+    return /^sk-[a-zA-Z0-9_-]{20,}$/.test(apiKey)
   },
 
   // Check if running in production
