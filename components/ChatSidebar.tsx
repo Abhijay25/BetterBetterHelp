@@ -30,8 +30,11 @@ export default function ChatSidebar({
   const [showClearConfirm, setShowClearConfirm] = useState(false)
 
   const handleDeleteSession = (sessionId: string, e: React.MouseEvent) => {
+    e.preventDefault()
     e.stopPropagation()
+    console.log('🗑️ Deleting session:', sessionId)
     deleteSession(sessionId)
+    console.log('✅ Session deleted successfully')
   }
 
   const handleClearAllChats = () => {
@@ -183,8 +186,12 @@ export default function ChatSidebar({
                 <div className="flex items-center space-x-1 ml-2">
                   {editingSessionId !== session.id && (
                     <button
-                      onClick={(e) => handleRightClick(session.id, e)}
-                      className={`p-1 rounded transition-colors ${
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        handleRightClick(session.id, e)
+                      }}
+                      className={`p-1 rounded transition-colors relative z-10 ${
                         isDarkMode ? 'hover:bg-blue-500/20' : 'hover:bg-blue-100'
                       }`}
                       title="Rename Chat (Right-click)"
@@ -193,8 +200,13 @@ export default function ChatSidebar({
                     </button>
                   )}
                   <button
-                    onClick={(e) => handleDeleteSession(session.id, e)}
-                    className={`p-1 rounded transition-colors ${
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      console.log('🗑️ Delete button clicked for session:', session.id)
+                      handleDeleteSession(session.id, e)
+                    }}
+                    className={`p-1 rounded transition-colors relative z-10 ${
                       isDarkMode ? 'hover:bg-red-500/20' : 'hover:bg-red-100'
                     }`}
                     title="Delete Chat"
